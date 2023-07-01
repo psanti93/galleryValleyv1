@@ -1,18 +1,14 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"path/filepath"
 
 	"github.com/go-chi/chi"
+	"github.com/psanti93/galleryValleyv1/controllers"
 	"github.com/psanti93/galleryValleyv1/views"
 )
-
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "home.gohtml")
-	executeTemplate(w, tplPath)
-}
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
 	tplPath := filepath.Join("templates", "contact.gohtml")
@@ -30,7 +26,7 @@ func executeTemplate(w http.ResponseWriter, filepath string) {
 	t, err := views.Parse(filepath)
 
 	if err != nil {
-		log.Printf("parsing template: %v", err)
+		fmt.Errorf("parsing template: %v", err)
 		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
 		return
 	}
@@ -40,9 +36,18 @@ func executeTemplate(w http.ResponseWriter, filepath string) {
 }
 
 func main() {
+
 	r := chi.NewRouter()
 
-	r.Get("/", homeHandler)
+	// parsing the template prior to executing it
+	tpl, err := views.Parse(filepath.Join("templates", "home.gohtml"))
+	if err != nil {
+		panic(err)
+	}
+
+	//comparison between static handler and using a regular handler func
+	r.Get("/", controllers.StaticHandler(tpl))
+
 	r.Get("/contact", contactHandler)
 	r.Get("/faq", faqHandler)
 

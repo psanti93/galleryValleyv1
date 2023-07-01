@@ -2,7 +2,6 @@ package views
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"text/template"
 )
@@ -23,7 +22,7 @@ func (t Template) Execute(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	err := t.view.Execute(w, nil)
 	if err != nil {
-		log.Printf("executing template: %v", err)
+		fmt.Errorf("executing template: %v", err)
 		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
 		return
 	}
