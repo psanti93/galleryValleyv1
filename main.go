@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"path/filepath"
 
@@ -9,31 +8,6 @@ import (
 	"github.com/psanti93/galleryValleyv1/controllers"
 	"github.com/psanti93/galleryValleyv1/views"
 )
-
-func contactHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "contact.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-func faqHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "faq.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-//Create Helper Function to execute the template
-
-func executeTemplate(w http.ResponseWriter, filepath string) {
-	t, err := views.Parse(filepath)
-
-	if err != nil {
-		fmt.Errorf("parsing template: %v", err)
-		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
-		return
-	}
-
-	t.Execute(w, nil)
-
-}
 
 func main() {
 
@@ -48,8 +22,19 @@ func main() {
 	//comparison between static handler and using a regular handler func
 	r.Get("/", controllers.StaticHandler(tpl))
 
-	r.Get("/contact", contactHandler)
-	r.Get("/faq", faqHandler)
+	// Contact
+	tpl, err = views.Parse(filepath.Join("templates", "contact.gohtml"))
+	if err != nil {
+		panic(err)
+	}
+	r.Get("/contact", controllers.StaticHandler(tpl))
+
+	// FAQ
+	tpl, err = views.Parse(filepath.Join("templates", "faq.gohtml"))
+	if err != nil {
+		panic(err)
+	}
+	r.Get("/faq", controllers.StaticHandler(tpl))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
