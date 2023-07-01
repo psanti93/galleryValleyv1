@@ -1,12 +1,12 @@
 package main
 
 import (
-	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 
 	"github.com/go-chi/chi"
+	"github.com/psanti93/galleryValleyv1/views"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,8 +27,7 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 //Create Helper Function to execute the template
 
 func executeTemplate(w http.ResponseWriter, filepath string) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	tpl, err := template.ParseFiles(filepath)
+	t, err := views.Parse(filepath)
 
 	if err != nil {
 		log.Printf("parsing template: %v", err)
@@ -36,12 +35,7 @@ func executeTemplate(w http.ResponseWriter, filepath string) {
 		return
 	}
 
-	err = tpl.Execute(w, nil)
-	if err != nil {
-		log.Printf("executing template: %v", err)
-		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
-		return
-	}
+	t.Execute(w, nil)
 
 }
 
