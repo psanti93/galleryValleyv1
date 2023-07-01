@@ -15,7 +15,6 @@ func main() {
 
 	// parsing the template prior to executing it
 	tpl := views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))
-
 	r.Get("/", controllers.StaticHandler(tpl))
 
 	//Contact
@@ -24,7 +23,6 @@ func main() {
 
 	// FAQ
 	tpl = views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))
-
 	r.Get("/faq", controllers.StaticHandler(tpl))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
