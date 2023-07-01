@@ -10,9 +10,20 @@ import (
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	tplPath := filepath.Join("templates", "home.gohtml")
+	executeTemplate(w, tplPath)
+}
+
+func contactHandler(w http.ResponseWriter, r *http.Request) {
+	tplPath := filepath.Join("templates", "contact.gohtml")
+	executeTemplate(w, tplPath)
+}
+
+//Create Helper Function to execute the template
+
+func executeTemplate(w http.ResponseWriter, filepath string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	tplPath := filepath.Join("templates", "home.gohtml") // divides the folder structure templates/home.gohtml
-	tpl, err := template.ParseFiles(tplPath)
+	tpl, err := template.ParseFiles(filepath)
 
 	if err != nil {
 		log.Printf("parsing template: %v", err)
@@ -26,12 +37,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
 		return
 	}
+
 }
 
 func main() {
 	r := chi.NewRouter()
 
 	r.Get("/", homeHandler)
+	r.Get("/contact", contactHandler)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
