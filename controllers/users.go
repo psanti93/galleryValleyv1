@@ -18,8 +18,7 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data.Email = r.FormValue("email")
-	data.Password = r.FormValue("password")
-	u.Templates.View.Execute(w, data)
+	u.Templates.View.Execute(w, data) // passes data that get from thhe form
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {
