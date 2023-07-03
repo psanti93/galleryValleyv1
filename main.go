@@ -15,11 +15,11 @@ func main() {
 	r := chi.NewRouter()
 
 	// parsing the template prior to executing it
-	tpl := views.Must(views.ParseFS(templates.FS, "home.gohtml"))
+	tpl := views.Must(views.ParseFS(templates.FS, "layout-page.gohtml", "home.gohtml"))
 	r.Get("/", controllers.StaticHandler(tpl))
 
 	//Contact
-	tpl = views.Must(views.ParseFS(templates.FS, "contact.gohtml"))
+	tpl = views.Must(views.ParseFS(templates.FS, "layout-page.gohtml", "contact.gohtml"))
 	r.Get("/contact", controllers.StaticHandler(tpl))
 
 	// FAQ
