@@ -2,13 +2,11 @@ package controllers
 
 import (
 	"net/http"
-
-	"github.com/psanti93/galleryValleyv1/views"
 )
 
 type Users struct {
 	Templates struct {
-		View views.Template
+		View View //using the view interface rather than reyling on the views.Templates package
 	}
 }
 

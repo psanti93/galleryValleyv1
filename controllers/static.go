@@ -2,19 +2,17 @@ package controllers
 
 import (
 	"net/http"
-
-	"github.com/psanti93/galleryValleyv1/views"
 )
 
 //creating a closure that takes in a template and returns back a handler
 
-func StaticHandler(tpl views.Template) http.HandlerFunc {
+func StaticHandler(tpl View) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tpl.Execute(w, nil)
 	}
 }
 
-func FAQ(tpl views.Template) http.HandlerFunc {
+func FAQ(tpl View) http.HandlerFunc {
 
 	questions := []struct {
 		Question string
