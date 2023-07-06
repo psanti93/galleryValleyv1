@@ -1,3 +1,6 @@
+Dropping a table 
+  drop table if exists <table name>;
+
 Lesson 1 - Creating tables
 create table users (
 id serial,
@@ -6,3 +9,13 @@ first_name text,
 last_name text,
 email text
 );
+
+
+Lesson 2 - Data types 
+types are essentially a way of defining a data type within a column
+Ex: 
+int - used to store integer
+varchar - like a string value in golang 
+serial  - integer that auto increments
+text - a column that is like a type string
+uuid - not auto incrementing. universally unique identifier 
