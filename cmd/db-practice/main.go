@@ -44,6 +44,8 @@ func main() {
 
 	fmt.Println("Connected")
 
+	//NOTE always do docker compose down before running stuff
+
 	// Create a table....
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
@@ -60,7 +62,7 @@ func main() {
 			amount INT,
 			description TEXT
 		);
-	
+
 	`)
 
 	if err != nil {
@@ -68,4 +70,22 @@ func main() {
 	}
 
 	fmt.Println("Tables Created!")
+
+	// Inserting a user...
+	first_name := "Paul"
+	last_name := "Santiago"
+	age := 29
+	email := "paul@santiago.com"
+	_, err = db.Exec(`
+		INSERT INTO users(first_name, last_name, age, email)
+		VALUES($1,$2,$3,$4);
+	
+	`, first_name, last_name, age, email)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("User Created")
+
 }
