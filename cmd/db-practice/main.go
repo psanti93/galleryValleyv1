@@ -89,22 +89,37 @@ func main() {
 	fmt.Println("User Created")
 
 	// acquiring a record id example
-	first_name_2 := "John"
-	last_name_2 := "Santiago"
-	age_2 := 24
-	email_2 := "john@santiago.com"
+	// first_name_2 := "John"
+	// last_name_2 := "Santiago"
+	// age_2 := 24
+	// email_2 := "john@santiago.com"
+
+	// row := db.QueryRow(`
+	// 	INSERT INTO users(first_name, last_name, age, email)
+	// 	VALUES($1,$2,$3,$4) RETURNING id;
+
+	// `, first_name_2, last_name_2, age_2, email_2)
+	// var id int
+	// err = row.Scan(&id)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// fmt.Println("User Created. Id =", id)
+
+	id := 1
 
 	row := db.QueryRow(`
-		INSERT INTO users(first_name, last_name, age, email)
-		VALUES($1,$2,$3,$4) RETURNING id;
-	
-	`, first_name_2, last_name_2, age_2, email_2)
-	var id int
-	err = row.Scan(&id)
+	  SELECT first_name, email
+	  FROM users
+	  WHERE id=$1;`, id)
+
+	var firstName, emailAddress string
+	err = row.Scan(&firstName, &emailAddress)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("User Created. Id =", id)
+	fmt.Printf("User information: name==%s, email=%s\n", firstName, emailAddress)
 
 }
