@@ -136,4 +136,47 @@ func main() {
 
 	fmt.Println("Created fake orders")
 
+	type Order struct {
+		ID          int
+		UserID      int
+		Amount      int
+		Description string
+	}
+
+	var orders []Order
+	userId := 1
+
+	rows, err := db.Query(`
+		SELECT id, amount, description
+		FROM orders
+		WHERE user_id=$1`, userId)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	// rows.Next() returns true if there is an object in the rows object, and if there's another record to look at
+	for rows.Next() {
+		var order Order
+		order.UserID = userId
+
+		// looks at the id, amount, description fields from the the DB
+		err := rows.Scan(&order.ID, &order.Amount, &order.Description)
+
+		if err != nil {
+			panic(err)
+		}
+
+		orders = append(orders, order)
+	}
+
+	//check for an err if there isn't initially anything on the rows.next
+
+	if rows.Err() != nil {
+		panic(err)
+	}
+
+	fmt.Println("Orders: ", orders)
 }
