@@ -3,28 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
-
-	/**
-		loops through all the args passed via the command line
-
-		Result:
-		what I run:
-		$ ./bcrypt compare "some password" "some hash value"
-
-		Args:
-		0 C:\Users\Paul\git\galleryValleyv1\bcrypt.exe
-		1 compare
-		2 some password
-		3 some hash value
-
-	**/
-
-	for i, arg := range os.Args {
-		fmt.Println(i, arg)
-	}
 
 	switch os.Args[1] {
 	case "hash":
@@ -39,9 +22,13 @@ func main() {
 }
 
 func hash(password string) {
-	//TODO hash password
-
-	fmt.Printf("TODO hash password %q\n", password)
+	// cost increases the the amount of time of a server to encrypt the password
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Printf("error hashing: %v\n", password)
+		return
+	}
+	fmt.Println(string(hashedBytes)) //prints out the hashed password. hash contains the salt and the cost, verifies password by comparing the salt password
 }
 
 func compare(password, hash string) {
