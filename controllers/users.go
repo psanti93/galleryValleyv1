@@ -3,12 +3,15 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/psanti93/galleryValleyv1/models"
 )
 
 type Users struct {
 	Templates struct {
 		View View //using the view interface rather than reyling on the views.Templates package
 	}
+	UserService *models.UserService
 }
 
 func (u Users) New(w http.ResponseWriter, r *http.Request) {

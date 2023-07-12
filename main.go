@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/psanti93/galleryValleyv1/controllers"
+	"github.com/psanti93/galleryValleyv1/models"
 	"github.com/psanti93/galleryValleyv1/templates"
 	"github.com/psanti93/galleryValleyv1/views"
 )
@@ -26,8 +27,22 @@ func main() {
 	tpl = views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))
 	r.Get("/faq", controllers.FAQ(tpl))
 
-	//rendering the sign up page with a users controller
-	usersC := controllers.Users{}
+	// Configuring the users controller to include the user service
+	cfg := models.DefaultPostgresConfig()
+
+	db, err := models.Open(cfg)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
+	userService := models.UserService{
+		DB: db}
+
+	usersC := controllers.Users{UserService: &userService}
+
 	usersC.Templates.View = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
 	r.Get("/signup", usersC.New)
 
