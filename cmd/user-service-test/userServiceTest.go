@@ -27,12 +27,20 @@ func main() {
 		DB: db,
 	}
 
-	user, err := userService.Create("paul@santiago3.com", "test1")
+	user, err := userService.Create("paul@santiago4.com", "test4")
 
 	if err != nil {
 		fmt.Errorf("Creating user: %v", err)
 	}
 
-	fmt.Println("User in DB: ", user)
+	fmt.Printf("User in created in DB: %+v ", user)
+
+	user, err = userService.Authenticate("paul@santiago4.com", "test4")
+
+	if err != nil {
+		fmt.Errorf("Authenticating user: %v", err)
+	}
+
+	fmt.Printf("User authetnicated in db: %+v", user)
 
 }
