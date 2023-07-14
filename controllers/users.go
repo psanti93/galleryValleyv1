@@ -66,5 +66,13 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "User doesn't exist", http.StatusInternalServerError)
 		return
 	}
+
+	cookie := http.Cookie{
+		Name:  "CookiePracticeEmail",
+		Value: user.Email,
+		Path:  "/",
+	}
+	http.SetCookie(w, &cookie)
+
 	fmt.Fprintf(w, "User Authenticated: %+v", user)
 }
