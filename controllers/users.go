@@ -67,16 +67,19 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// creating a cookie with golang
 	cookie := http.Cookie{
-		Name:  "CookiePracticeEmail",
-		Value: user.Email,
-		Path:  "/",
+		Name:     "CookiePracticeEmail",
+		Value:    user.Email,
+		Path:     "/",
+		HttpOnly: true, // only want cookies to be accessible via http browser requests, don't allow cookies to work for java script
 	}
 	http.SetCookie(w, &cookie)
 
 	fmt.Fprintf(w, "User Authenticated: %+v", user)
 }
 
+// reading a cookie with golang
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 	email, err := r.Cookie("CookiePracticeEmail")
 
