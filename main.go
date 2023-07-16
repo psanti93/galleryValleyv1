@@ -52,6 +52,8 @@ func main() {
 	//testing out parsing sign up form
 	r.Post("/users", usersC.Create)
 	r.Post("/signin", usersC.ProcessSignIn)
+
+	// getting the cookie of the user
 	r.Get("/users/me", usersC.CurrentUser)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
