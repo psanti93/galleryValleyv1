@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/gorilla/csrf"
 	"github.com/psanti93/galleryValleyv1/controllers"
 	"github.com/psanti93/galleryValleyv1/models"
 	"github.com/psanti93/galleryValleyv1/templates"
@@ -56,11 +58,28 @@ func main() {
 	// getting the cookie of the user
 	r.Get("/users/me", usersC.CurrentUser)
 
+	// getting cooke with timer middleware
+	//r.Get("/users/me", TimerMiddleWare(usersC.CurrentUser))
+
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
 
 	fmt.Println("Starting server on port 3000....")
+	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"               // needs a 32 character auth key
+	csrfMw := csrf.Protect([]byte(csrfKey), csrf.Secure(false)) // csrf.Secure() by default it's true, it requires an https secure connection, false for now cause local we don't have https connection. set to true in prod
+	http.ListenAndServe(":3000", csrfMw(r))
 
-	http.ListenAndServe(":3000", r)
+	// wrapping the entire router into a timer middleware tracks every request
+	//http.ListenAndServe(":3000", TimerMiddleWare(r.ServeHTTP))
+}
+
+// Example of middleware
+// middlewares take in a handler function and return a handler function or takes in a handler and returns a handler
+func TimerMiddleWare(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		h(w, r)
+		fmt.Println("Request Time:", time.Since(start).Milliseconds())
+	}
 }
