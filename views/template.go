@@ -1,8 +1,10 @@
 package views
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
@@ -27,8 +29,8 @@ func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
 	// adding the function called csrfField to the instantiated template
 	tpl = tpl.Funcs(
 		template.FuncMap{
-			"csrfField": func() template.HTML {
-				return `<!-- TODO implement CSRF Field -->` // 1. Parses a filler function that will later be filled in Execute Line 46
+			"csrfField": func() (template.HTML, error) {
+				return "", fmt.Errorf("csrfField not implemented") // 1. Parses a filler function that will later be filled in Execute Line 46
 			},
 		},
 	)
@@ -55,16 +57,22 @@ func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface
 	//2. takes the filler function we Parsed and execute the logic for passing in a csrf token
 	tpl = tpl.Funcs(
 		template.FuncMap{
+			// comment out to see error message example
 			"csrfField": func() template.HTML {
 				return csrf.TemplateField(r)
 			},
 		},
 	)
-
-	err = tpl.Execute(w, data)
+	// create a buffer to execute a template in
+	/** this solves the following use case from populating in the console whenever there is an error:
+		http: superfluous response.WriteHeader call from github.com/psanti93/galleryValleyv1/views.Template.Execute (template.go:65)
+	**/
+	var buf bytes.Buffer
+	err = tpl.Execute(&buf, data)
 	if err != nil {
-		fmt.Errorf("executing template: %v", err)
+		fmt.Printf("executing template: %v", err)
 		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
 		return
 	}
+	io.Copy(w, &buf) // copy everything from the buffer into the writer response will return a 500 status code as expected when ther eis an error
 }
