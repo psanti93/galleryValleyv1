@@ -28,7 +28,7 @@ func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
 	tpl = tpl.Funcs(
 		template.FuncMap{
 			"csrfField": func() template.HTML {
-				return `<!-- TODO implement CSRF Field -->` // implement a filler function and later when we run the Execute() we can pass in a request to do what we want
+				return `<!-- TODO implement CSRF Field -->` // 1. Parses a filler function that will later be filled in Execute Line 46
 			},
 		},
 	)
@@ -46,12 +46,13 @@ func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
 func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface{}) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	tpl, err := t.view.Clone() // Clone() prevents race condtion --> avoids the use case of when you have multiple users and each getting the same csrfTemplate
+	tpl, err := t.view.Clone() // Clone() prevents race condtion --> avoids the use case of when you have multiple users, and getting the same csrfTemplate
 	if err != nil {
 		log.Printf("cloning template:%v", err)
 		http.Error(w, "There was an error rendering the page", http.StatusInternalServerError)
 		return
 	}
+	//2. takes the filler function we Parsed and execute the logic for passing in a csrf token
 	tpl = tpl.Funcs(
 		template.FuncMap{
 			"csrfField": func() template.HTML {
