@@ -1,0 +1,29 @@
+Dropping a table 
+  drop table if exists <table name>;
+
+Lesson 1 - Creating tables
+create table users (
+id serial,
+age int,
+first_name text,
+last_name text,
+email text
+);
+
+
+Lesson 2 - Data types 
+types are essentially a way of defining a data type within a column
+Ex: 
+int - used to store integer
+varchar - like a string value in golang 
+serial  - integer that auto increments
+text - a column that is like a type string
+uuid - not auto incrementing. universally unique identifier 
+
+Lesson 3 - Constraints
+Constraints are rules that you can apply to fields in a table 
+
+Ex:
+Primary Key - value cannot be null example an id SERIAL PRIMARY Key
+UNIQUE - every single entry in the dB needs a unique value for a field ex: email TEXT UNIQUE NOT NULL 
+NOT NULL this ensures every record for a field has a value ex: email TEXT UNIQUE NOT NULL email will not be null, usually provided with UNIQUE
