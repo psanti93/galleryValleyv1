@@ -2,30 +2,34 @@ package controllers
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
+	"github.com/gorilla/csrf"
 	"github.com/psanti93/galleryValleyv1/models"
 )
 
 type Users struct {
 	Templates struct {
-		New    View //using the view interface rather than reyling on the views.Templates package
+		SignUp View //using the view interface rather than reyling on the views.Templates package
 		SignIn View
 	}
 	UserService *models.UserService
 }
 
-func (u Users) New(w http.ResponseWriter, r *http.Request) {
+// Signing Up a New User
+func (u Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Email    string
-		Password string
+		Email     string
+		CSRFField template.HTML
 	}
 
 	data.Email = r.FormValue("email")
-	u.Templates.New.Execute(w, data) // passes data that get from thhe form
+	data.CSRFField = csrf.TemplateField(r)
+	u.Templates.SignUp.Execute(w, data) // passes data that get from thhe form
 }
 
-func (u Users) Create(w http.ResponseWriter, r *http.Request) {
+func (u Users) CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
@@ -40,6 +44,8 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 	// +v adds fields for users
 	fmt.Fprintf(w, "User Created:%+v ", user)
 }
+
+// Signing in Functionalities
 
 func (u Users) SignIn(w http.ResponseWriter, r *http.Request) {
 	var data struct {

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/csrf"
@@ -45,21 +44,18 @@ func main() {
 
 	usersC := controllers.Users{UserService: &userService}
 
-	usersC.Templates.New = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
-	r.Get("/signup", usersC.New)
+	// Sign Up
+	usersC.Templates.SignUp = views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))
+	r.Get("/signup", usersC.SignUp)
+	r.Post("/users", usersC.CreateUser)
 
+	// Sign In
 	usersC.Templates.SignIn = views.Must(views.ParseFS(templates.FS, "signin.gohtml", "tailwind.gohtml"))
 	r.Get("/signin", usersC.SignIn)
-
-	//testing out parsing sign up form
-	r.Post("/users", usersC.Create)
 	r.Post("/signin", usersC.ProcessSignIn)
 
 	// getting the cookie of the user
 	r.Get("/users/me", usersC.CurrentUser)
-
-	// getting cooke with timer middleware
-	//r.Get("/users/me", TimerMiddleWare(usersC.CurrentUser))
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
@@ -70,16 +66,4 @@ func main() {
 	csrfMw := csrf.Protect([]byte(csrfKey), csrf.Secure(false)) // csrf.Secure() by default it's true, it requires an https secure connection, false for now cause local we don't have https connection. set to true in prod
 	http.ListenAndServe(":3000", csrfMw(r))
 
-	// wrapping the entire router into a timer middleware tracks every request
-	//http.ListenAndServe(":3000", TimerMiddleWare(r.ServeHTTP))
-}
-
-// Example of middleware
-// middlewares take in a handler function and return a handler function or takes in a handler and returns a handler
-func TimerMiddleWare(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		h(w, r)
-		fmt.Println("Request Time:", time.Since(start).Milliseconds())
-	}
 }
