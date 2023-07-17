@@ -8,7 +8,7 @@ import (
 
 func StaticHandler(tpl View) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tpl.Execute(w, nil)
+		tpl.Execute(w, r, nil)
 	}
 }
 
@@ -37,6 +37,6 @@ func FAQ(tpl View) http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		tpl.Execute(w, questions)
+		tpl.Execute(w, r, questions)
 	}
 }
