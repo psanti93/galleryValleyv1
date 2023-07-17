@@ -2,10 +2,8 @@ package controllers
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 
-	"github.com/gorilla/csrf"
 	"github.com/psanti93/galleryValleyv1/models"
 )
 
@@ -20,12 +18,10 @@ type Users struct {
 // Signing Up a New User
 func (u Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		Email     string
-		CSRFField template.HTML
+		Email string
 	}
 
 	data.Email = r.FormValue("email")
-	data.CSRFField = csrf.TemplateField(r)
 	u.Templates.SignUp.Execute(w, data) // passes data that get from thhe form
 }
 

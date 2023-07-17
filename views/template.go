@@ -2,9 +2,9 @@ package views
 
 import (
 	"fmt"
+	"html/template"
 	"io/fs"
 	"net/http"
-	"text/template"
 )
 
 type Template struct {
@@ -20,10 +20,23 @@ func Must(t Template, err error) Template {
 }
 
 func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
-	tpl, err := template.ParseFS(fs, patterns...)
+	tpl := template.New(patterns[0]) // the first gohtml page that gets passed in
+	// adding the function called csrfField to the instantiated template
+	tpl = tpl.Funcs(
+		template.FuncMap{
+			"csrfField": func() template.HTML {
+				return `<input type="hidden" />`
+			},
+		},
+	)
+
+	// running the parsing function against the tpl type you instantiate on line 23
+	// this allows the csrfField function to be populated
+	tpl, err := tpl.ParseFS(fs, patterns...)
 	if err != nil {
 		return Template{}, fmt.Errorf("parsing fs template: %w", err)
 	}
+
 	return Template{view: tpl}, nil
 }
 
