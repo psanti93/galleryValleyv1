@@ -6,8 +6,6 @@ import (
 	"fmt"
 )
 
-const SessionTokenBytes = 32
-
 func Bytes(n int) ([]byte, error) {
 	b := make([]byte, n)
 
@@ -23,17 +21,13 @@ func Bytes(n int) ([]byte, error) {
 	return b, nil
 }
 
-// String returns a random string using crypto/rand.
+// SessionToken returns a random string using crypto/rand.
 // n is the number of bytes being used to generate the random string
 
-func String(n int) (string, error) {
+func GenerateSessionToken(n int) (string, error) {
 	b, err := Bytes(n)
 	if err != nil {
 		return "", fmt.Errorf("string: %w", err)
 	}
 	return base64.URLEncoding.EncodeToString(b), nil
-}
-
-func SessionToken() (string, error) {
-	return String(SessionTokenBytes)
 }
