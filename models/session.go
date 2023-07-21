@@ -1,6 +1,11 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+
+	"github.com/psanti93/galleryValleyv1/rand"
+)
 
 type Session struct {
 	ID     int
@@ -18,9 +23,25 @@ type SessionService struct {
 
 func (ss *SessionService) Create(userID int) (*Session, error) {
 	//TODO: Create the session token
+	token, err := rand.SessionToken()
+
+	if err != nil {
+		return nil, fmt.Errorf("Creating Session: %w", err)
+	}
+
+	// TODO: hash the session token
+
+	session := Session{
+		UserID: userID,
+		Token:  token,
+		//TODO set th the token hash
+	}
+
+	//TODO store session in DB
+
 	//TODO: Implement SessionService.Create
 
-	return nil, nil
+	return &session, nil
 
 }
 
