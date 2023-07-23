@@ -49,25 +49,42 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 	session := Session{
 		UserID: userID,
 		Token:  token,
-		//TODO set th the token hash
+		//TODO set the token hash
 
 		TokenHash: ss.hash(token),
 	}
 
-	//TODO store session in DB
+	//(a user is currently limited to one session upon signing up or signing in, will cause an error)
+	// HOW TO FIX:
+	// Option 1:
+	//1. Query for a user
+	//2. If found, update user's session
+	//3. if not found create new session for user
+
+	// Option 2 - PSQL specfic:
+	//1. try to update the user's session
+	//2. if err, create a new session
+
 	row := ss.DB.QueryRow(`
+	UPDATE sessions
+	SET token_hash = $2
+	WHERE user_id=$1
+	RETURNING id;`, session.UserID, session.TokenHash)
+	err = row.Scan(&session.ID)
+
+	if err == sql.ErrNoRows {
+		row = ss.DB.QueryRow(`
 		INSERT INTO sessions (user_id,token_hash) 
 		VALUES ($1,$2)
 		RETURNING id;
 	`, session.UserID, session.TokenHash)
+		err = row.Scan(&session.ID)
 
-	err = row.Scan(&session.ID)
+	}
 
 	if err != nil {
 		return nil, fmt.Errorf("Inserting session token: %w", err)
 	}
-
-	//TODO: Implement SessionService.Create
 
 	return &session, nil
 
