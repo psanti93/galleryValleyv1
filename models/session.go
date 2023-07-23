@@ -55,6 +55,17 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 	}
 
 	//TODO store session in DB
+	row := ss.DB.QueryRow(`
+		INSERT INTO sessions (user_id,token_hash) 
+		VALUES ($1,$2)
+		RETURNING id;
+	`, session.UserID, session.TokenHash)
+
+	err = row.Scan(&session.ID)
+
+	if err != nil {
+		return nil, fmt.Errorf("Inserting session token: %w", err)
+	}
 
 	//TODO: Implement SessionService.Create
 
@@ -72,3 +83,5 @@ func (ss *SessionService) hash(token string) string {
 
 	return base64.URLEncoding.EncodeToString(tokenHash[:]) // [:] take the start and end of a byte array and use all the bytes of w/in an array
 }
+
+// TODO Token Manger
