@@ -61,6 +61,9 @@ func main() {
 	// getting the cookie of the user
 	r.Get("/users/me", usersC.CurrentUser)
 
+	//Add sign outrout
+	r.Post("/signout", usersC.ProcessSignOut)
+
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
