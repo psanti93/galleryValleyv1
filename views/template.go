@@ -30,7 +30,7 @@ func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
 	tpl = tpl.Funcs(
 		template.FuncMap{
 			"csrfField": func() (template.HTML, error) {
-				return "", fmt.Errorf("csrfField not implemented") // 1. Parses a filler function that will later be filled in Execute Line 46
+				return "", fmt.Errorf("csrfField not implemented") // 1. Parses a filler function that will later be filled in Execute Line 61
 			},
 		},
 	)
@@ -59,7 +59,7 @@ func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface
 		template.FuncMap{
 			// comment out to see error message example
 			"csrfField": func() template.HTML {
-				return csrf.TemplateField(r)
+				return csrf.TemplateField(r) // creates the hidden token and key
 			},
 		},
 	)
