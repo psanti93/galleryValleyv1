@@ -1,0 +1,15 @@
+{
+  "id": 22,
+  "title": "Demo Post",
+  "markdown": "This is a demo blog post...",
+  "comments": [
+    {
+      "author": {
+        "id": 123,
+        "email": "jon@calhoun.io",
+        "username": "joncalhoun",
+      },
+      "markdown": "This was a great post!"
+    }
+  ]
+}
