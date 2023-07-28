@@ -7,3 +7,9 @@ CREATE TABLE sessions (
 
 -- will tell our db that users id are entered intot eh sessions table map to real users objects
 -- if we delete a user they can't have a session associated with them
+
+
+-- altering an existing table to add another constraint
+ALTER TABLE sessions(
+    ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY(user_id) REFERENCES users (id);
+)
