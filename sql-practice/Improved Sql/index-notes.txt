@@ -1,0 +1,17 @@
+A few examples of common things that may need indexed: - 
+
+Improves the reads on a DB if you sort by an attribute that's commonly queried
+Any fields that are frequently used for querying a record. - 
+Eg we query sessions via the token_hash every time we lookup who a user is via their cookie. - 
+We also lookup users via their email every time they log in, so this might be another good candidate.
+
+Columns used frequently for joins.
+
+sessions.user_id
+many foreign keys will fall into this category, but some may be used infrequently enough to not index them.
+Columns with a UNIQUE or PRIMARY KEY constraint
+
+Postgres automatically creates a unique index when these exist.
+Another factor is the size of our database table. 
+If we have a small table that we don’t expect to grow, but we do plan to update it frequently 
+and query infrequently, it might be worth experimenting with not using indexes to compare performance.
