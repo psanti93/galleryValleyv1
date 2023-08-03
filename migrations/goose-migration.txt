@@ -1,0 +1,28 @@
+
+Indicates a migration is pending 
+goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" status
+2023/08/03 18:05:47     Applied At                  Migration
+2023/08/03 18:05:47     =======================================
+2023/08/03 18:05:47     Pending                  -- 20230803175818_widgets.sql
+
+
+Indicates that a migration was successful:
+
+goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" up
+2023/08/03 18:06:33 OK   20230803175818_widgets.sql (36.7ms)
+2023/08/03 18:06:33 goose: successfully migrated database to version: 20230803175818
+
+goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" status
+2023/08/03 18:06:45     Applied At                  Migration
+2023/08/03 18:06:45     =======================================
+2023/08/03 18:06:45     Thu Aug  3 22:06:33 2023 -- 20230803175818_widgets.sql
+
+Indicates that a migration was brought down: 
+
+goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" down
+2023/08/03 18:07:05 OK   20230803175818_widgets.sql (68.88ms)
+
+goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" status
+2023/08/03 18:07:13     Applied At                  Migration
+2023/08/03 18:07:13     =======================================
+2023/08/03 18:07:13     Pending                  -- 20230803175818_widgets.sql
