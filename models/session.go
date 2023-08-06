@@ -40,6 +40,7 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 	if bytesPerToken < MinBytesPerToken {
 		bytesPerToken = MinBytesPerToken
 	}
+	// generates an unhashed token that will be set for the cookie's value
 	token, err := rand.GenerateSessionToken(bytesPerToken)
 
 	if err != nil {
@@ -70,11 +71,12 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 
 }
 
+// Authenticates a user by taking the unhashed token from a cookie object, hashing it, and running against the DB to make sure it's the user
 func (ss *SessionService) User(token string) (*User, error) {
 	// TODO: Optimize sql query using join
 	var user User
 
-	// 1. hash the session token
+	// 1. hash the session token from the cookie on the web page (in dev tools - application and check cookie named "session")
 	tokenHash := ss.hash(token)
 	// 2. query the session with that hash and populate user
 
