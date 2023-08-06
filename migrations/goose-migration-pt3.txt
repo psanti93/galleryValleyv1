@@ -1,0 +1,14 @@
+goose has a tool called 'goose fix' that will version out your migration files
+
+````
+2023-01-01_some_migration.sql
+2023-01-03_paul.sql <-- say I submit my sql file days after john's this can cause an issue as far as versioning
+2023-01-02_john.sql 
+`````
+
+goose fix will append some sort of version prefix to distinguish between each file version
+````
+00001_some_migration.sql
+00002_paul.sql
+00003_john.sql
+````
