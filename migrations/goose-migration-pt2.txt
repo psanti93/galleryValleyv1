@@ -1,0 +1,15 @@
+Creating the sessions and users TABLE
+goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" statu 
+s
+2023/08/06 11:01:20     Applied At                  Migration
+2023/08/06 11:01:20     =======================================
+2023/08/06 11:01:20     Pending                  -- 20230806105549_users.sql
+2023/08/06 11:01:20     Pending                  -- 20230806105842_sessions.sql
+
+
+Standing them up (make sure you do docker compose down and then docker compose up -d )
+
+goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" up    
+2023/08/06 11:01:25 OK   20230806105549_users.sql (31.98ms)
+2023/08/06 11:01:25 OK   20230806105842_sessions.sql (57.53ms)
+2023/08/06 11:01:25 goose: successfully migrated database to version: 20230806105842
