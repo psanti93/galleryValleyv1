@@ -54,6 +54,9 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 		TokenHash: ss.hash(token),
 	}
 
+	fmt.Printf("Session Token: %v ", session.Token)
+	fmt.Printf("Session Token Hash: %v", session.TokenHash)
+
 	//(a user is currently limited to one session upon signing up or signing in, will cause an error)
 	// HOW TO FIX:
 	// Option 1:
