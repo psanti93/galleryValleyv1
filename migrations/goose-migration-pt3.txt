@@ -12,3 +12,7 @@ goose fix will append some sort of version prefix to distinguish between each fi
 00002_paul.sql
 00003_john.sql
 ````
+
+goose fix (under the migrations folder)
+2023/08/06 11:30:29 RENAMED 20230806105549_users.sql => 00001_users.sql
+2023/08/06 11:30:29 RENAMED 20230806105842_sessions.sql => 00002_sessions.sql
