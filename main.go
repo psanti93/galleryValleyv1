@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/gorilla/csrf"
 	"github.com/psanti93/galleryValleyv1/controllers"
+	"github.com/psanti93/galleryValleyv1/migrations"
 	"github.com/psanti93/galleryValleyv1/models"
 	"github.com/psanti93/galleryValleyv1/templates"
 	"github.com/psanti93/galleryValleyv1/views"
@@ -40,7 +41,7 @@ func main() {
 	defer db.Close()
 
 	// running the migrations
-	err = models.Migrate(db, "migrations")
+	err = models.MigrateFS(db, migrations.EmbedMigratonFS, ".")
 
 	if err != nil {
 		panic(err)
