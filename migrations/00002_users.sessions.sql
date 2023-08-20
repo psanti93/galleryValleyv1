@@ -1,14 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE users(
+CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL
-
+    user_id INT UNIQUE REFERENCES users(id) on DELETE CASCADE,
+    token_hash TEXT UNIQUE NOT NULL
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE users;
+DROP TABLE sessions;
 -- +goose StatementEnd
