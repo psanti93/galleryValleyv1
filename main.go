@@ -39,6 +39,13 @@ func main() {
 
 	defer db.Close()
 
+	// running the migrations
+	err = models.Migrate(db, "migrations")
+
+	if err != nil {
+		panic(err)
+	}
+
 	userService := models.UserService{
 		DB: db}
 

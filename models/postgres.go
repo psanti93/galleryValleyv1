@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/pressly/goose/v3"
 )
 
 // Open will open a sql connection with provided postgres DB
@@ -42,4 +43,22 @@ type PostgresConfig struct {
 func (cfg PostgresConfig) String() string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Host, cfg.Port,
 		cfg.User, cfg.Password, cfg.Database, cfg.SSLMode)
+}
+
+// Migrate function captures the following command:
+// goose postgres "host=localhost port=3356 user=mike password=ditka dbname=galleyvalley sslmode=disable" up
+
+func Migrate(db *sql.DB, dir string) error {
+	err := goose.SetDialect("postgres")
+
+	if err != nil {
+		return fmt.Errorf("Migrate: %v", err)
+	}
+
+	err = goose.Up(db, dir)
+
+	if err != nil {
+		return fmt.Errorf("Migration Start: %v", err)
+	}
+	return nil
 }
