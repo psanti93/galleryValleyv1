@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/psanti93/galleryValleyv1/context"
 	"github.com/psanti93/galleryValleyv1/models"
 )
 
@@ -95,24 +96,30 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 // reading a cookie with golang
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 
-	token, err := readCookie(r, CookieSession)
-
-	if err != nil {
-		fmt.Println(err)
-		http.Redirect(w, r, "/signin", http.StatusFound)
+	// Checks if a user currentl exists with the request
+	user := context.User(r.Context())
+	if user == nil {
+		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
+	fmt.Fprintf(w, "Current user: %s\n", user.Email)
+
+	// token, err := readCookie(r, CookieSession)
+
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	http.Redirect(w, r, "/signin", http.StatusFound)
+	// 	return
+	// }
 
 	// uses the user function from session service to look up the user based on that cookie
-	user, err := u.SessionService.User(token)
+	// user, err := u.SessionService.User(token)
 
-	if err != nil {
-		fmt.Println(err)
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
-
-	fmt.Fprintf(w, "Current user: %s\n", user.Email)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	http.Redirect(w, r, "/signin", http.StatusFound)
+	// 	return
+	// }
 
 }
 
