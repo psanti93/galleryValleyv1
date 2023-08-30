@@ -76,9 +76,15 @@ func main() {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
 
-	fmt.Println("Starting server on port 3000....")
+	//Create instance of user middleware
+	umw := controllers.UserMiddleware{
+		SessionService: &sessionService,
+	}
+
 	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"               // needs a 32 character auth key
 	csrfMw := csrf.Protect([]byte(csrfKey), csrf.Secure(false)) // csrf.Secure() by default it's true, it requires an https secure connection, false for now cause local we don't have https connection. set to true in prod
-	http.ListenAndServe(":3000", csrfMw(r))
+	fmt.Println("Starting server on port 3000....")
+
+	http.ListenAndServe(":3000", csrfMw(umw.SetUser(r)))
 
 }
