@@ -10,6 +10,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/csrf"
+	"github.com/psanti93/galleryValleyv1/context"
+	"github.com/psanti93/galleryValleyv1/models"
 )
 
 type Template struct {
@@ -31,6 +33,9 @@ func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
 		template.FuncMap{
 			"csrfField": func() (template.HTML, error) {
 				return "", fmt.Errorf("csrfField not implemented") // 1. Parses a filler function that will later be filled in Execute Line 61
+			},
+			"currentUser": func() (template.HTML, error) {
+				return "", fmt.Errorf("current user not implemented")
 			},
 		},
 	)
@@ -60,6 +65,9 @@ func (t Template) Execute(w http.ResponseWriter, r *http.Request, data interface
 			// comment out to see error message example
 			"csrfField": func() template.HTML {
 				return csrf.TemplateField(r) // creates the hidden token and key
+			},
+			"currentUser": func() *models.User {
+				return context.User(r.Context())
 			},
 		},
 	)
