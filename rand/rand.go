@@ -7,9 +7,9 @@ import (
 )
 
 func Bytes(n int) ([]byte, error) {
-	b := make([]byte, n)
+	b := make([]byte, n) // an array of 0's based one the size ex: length of 5 [0,0,0,0,0]
 
-	nRead, err := rand.Read(b)
+	nRead, err := rand.Read(b) // creates an array of random bytes based on the size ex: [158 15 94 223 155}
 	if err != nil {
 		return nil, fmt.Errorf("bytes: %w", err)
 	}
