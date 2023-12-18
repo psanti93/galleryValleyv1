@@ -151,6 +151,7 @@ func (umw UserMiddleware) SetUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token, err := readCookie(r, CookieSession)
 
+		// if there isn't a coookie we're going to proceed the request and asume the user isn't logged in
 		if err != nil {
 			next.ServeHTTP(w, r)
 			return
@@ -161,9 +162,13 @@ func (umw UserMiddleware) SetUser(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
+		//1. grab the context of within the request
 		ctx := r.Context()
+		//2. Update the context in the request with the current user
 		ctx = context.WithUser(ctx, user)
+		//3. update the requet be associated with this updated context
 		r = r.WithContext(ctx)
+		//4. continue the request with the existing request and response writer
 		next.ServeHTTP(w, r)
 
 	})
