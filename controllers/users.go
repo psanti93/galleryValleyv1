@@ -99,14 +99,6 @@ func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 	// Checks if a user currently exists with the request
 	user := context.User(r.Context())
 
-	// this can be commented out since we're this page will only be access if a user is present which the
-	// requireUser middleware checks already
-
-	// if user == nil {
-	// 	http.Redirect(w, r, "/", http.StatusFound)
-	// 	return
-	// }
-
 	fmt.Fprintf(w, "Current user: %s\n", user.Email)
 
 }
