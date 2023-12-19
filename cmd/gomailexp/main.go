@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/go-mail/mail/v2"
+	"github.com/psanti93/galleryValleyv1/models"
 )
 
 const (
@@ -19,30 +18,26 @@ func main() {
 	to := "paul@test.com"
 	from := "go@gest.com"
 	subject := "Hello World"
-	plainText := "Hello World!"
+	plainText := "Hello World! TESTING 123"
 	html := `<h1>Hello World!</h1><p>This is a test email</p>`
 
-	msg := mail.NewMessage()
-	msg.SetHeader("To", to)
-	msg.SetHeader("From", from)
-	msg.SetHeader("Subject", subject)
-	msg.SetBody("text/plain", plainText)
-	msg.AddAlternative("text/html", html)
+	email := models.Email{
+		From:      from,
+		To:        to,
+		Subject:   subject,
+		Plaintext: plainText,
+		HTML:      html,
+	}
 
-	msg.WriteTo(os.Stdout)
+	es := models.NewEmailService(models.SMTConfig{
+		Host:     host,
+		Port:     port,
+		Username: username,
+		Password: password,
+	})
 
-	dailer := mail.NewDialer(host, port, username, password)
-	// One approach
-	// sender, err := dailer.Dial()
+	err := es.Send(email)
 
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// defer sender.Close()
-	// sender.Send(from, []string{to}, msg)
-
-	err := dailer.DialAndSend(msg)
 	if err != nil {
 		panic(err)
 	}
