@@ -15,19 +15,19 @@ const (
 
 func main() {
 
-	to := "paul@test.com"
-	from := "go@gest.com"
-	subject := "Hello World"
-	plainText := "Hello World! TESTING 123"
-	html := `<h1>Hello World!</h1><p>This is a test email</p>`
+	// to := "paul@test.com"
+	// from := "go@gest.com"
+	// subject := "Hello World"
+	// plainText := "Hello World! TESTING 123"
+	// html := `<h1>Hello World!</h1><p>This is a test email</p>`
 
-	email := models.Email{
-		From:      from,
-		To:        to,
-		Subject:   subject,
-		Plaintext: plainText,
-		HTML:      html,
-	}
+	// email := models.Email{
+	// 	From:      from,
+	// 	To:        to,
+	// 	Subject:   subject,
+	// 	Plaintext: plainText,
+	// 	HTML:      html,
+	// }
 
 	es := models.NewEmailService(models.SMTConfig{
 		Host:     host,
@@ -36,7 +36,7 @@ func main() {
 		Password: password,
 	})
 
-	err := es.Send(email)
+	err := es.ForgotPassword("paul@test.com", "http://lenslockedv1.com/pw?token=1234")
 
 	if err != nil {
 		panic(err)
