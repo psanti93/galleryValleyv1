@@ -94,7 +94,7 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 
 // reading a cookie with golang
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
-
+	// grabs the unhashed value from the cookie object we created when signing in or signing up
 	token, err := readCookie(r, CookieSession)
 
 	if err != nil {

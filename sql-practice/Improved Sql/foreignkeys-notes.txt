@@ -1,0 +1,18 @@
+IF we try to delete from users table we will violate the foreign key constraint on the sessions table:
+
+DELETE FROM users WHERE id=4;
+
+RESULT: 
+ERROR:  update or delete on table "users" violates foreign key constraint "sessions_user_id_fkey" on table "sessions"
+DETAIL:  Key (id)=(4) is still referenced from table "sessions".
+
+You would have to delete that user from the users table first_name and then delete the user
+DELETE FROM session WHERE user_id=4; 
+
+
+Same thing if we try to insert into sessions for a user ID that doesn't exist:
+INSERT INTO sessions (user_id,token_hash) VALUES(123,'some-hash');
+
+RESULT:
+ERROR:  insert or update on table "sessions" violates foreign key constraint "sessions_user_id_fkey"
+DETAIL:  Key (user_id)=(123) is not present in table "users".
