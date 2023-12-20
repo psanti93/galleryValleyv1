@@ -2,18 +2,28 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strconv"
 
+	"github.com/joho/godotenv"
 	"github.com/psanti93/galleryValleyv1/models"
 )
 
-const (
-	host     = "sandbox.smtp.mailtrap.io"
-	port     = 2525
-	username = "d26bb25ad79d5b"
-	password = "c3b937b646f1d3"
-)
-
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	host := os.Getenv("SMTP_HOST")
+	portStr := os.Getenv("SMTP_PORT")
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		panic(err)
+	}
+	username := os.Getenv("SMTP_USERNAME")
+	password := os.Getenv("SMTP_PASSWORD")
 
 	// to := "paul@test.com"
 	// from := "go@gest.com"
@@ -36,7 +46,7 @@ func main() {
 		Password: password,
 	})
 
-	err := es.ForgotPassword("paul@test.com", "http://lenslockedv1.com/pw?token=1234")
+	err = es.ForgotPassword("paul@test.com", "http://lenslockedv1.com/pw?token=1234")
 
 	if err != nil {
 		panic(err)
