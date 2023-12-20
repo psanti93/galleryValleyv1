@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/psanti93/galleryValleyv1/context"
 	"github.com/psanti93/galleryValleyv1/models"
@@ -10,11 +11,15 @@ import (
 
 type Users struct {
 	Templates struct {
-		SignUp View //using the view interface rather than reyling on the views.Templates package
-		SignIn View
+		SignUp                 View //using the view interface rather than reyling on the views.Templates package
+		SignIn                 View
+		ForgotPasswordTemplate View
+		CheckYoureEmail        View
 	}
-	UserService    *models.UserService
-	SessionService *models.SessionService
+	UserService          *models.UserService
+	SessionService       *models.SessionService
+	PasswordResetService *models.PasswordResetService
+	EmailService         *models.EmailService
 }
 
 // Signing Up a New User
@@ -119,6 +124,44 @@ func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
 	deleteCookie(w, CookieSession)
 
 	http.Redirect(w, r, "/signin", http.StatusFound)
+}
+
+func (u Users) ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email string
+	}
+	data.Email = r.FormValue("email")
+
+	u.Templates.ForgotPasswordTemplate.Execute(w, r, data)
+}
+
+func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email string
+	}
+	data.Email = r.FormValue("email")
+
+	pwReset, err := u.PasswordResetService.Create(data.Email)
+	if err != nil {
+		// TODO Handle other cases in the future:
+		// 1. user doesn't exist with that email address
+		fmt.Println(err)
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
+	vals := url.Values{
+		"token": {pwReset.Token},
+	}
+	resetURL := "https://www.lenslocked.com/reset-pw?" + vals.Encode()
+	err = u.EmailService.ForgotPassword(data.Email, resetURL)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
+	// Don't render reset token here! We need the user to confirm they have access to the email account to verify
+	// their identity
+	u.Templates.CheckYoureEmail.Execute(w, r, data)
 }
 
 //User Middleware
