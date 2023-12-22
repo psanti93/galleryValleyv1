@@ -1,0 +1,28 @@
+{{template "header" .}}
+<div class="py-12 flex justify-center">
+  <div class="px-8 py-8 bg-white rounded shadow">
+    <h1 class="pt-4 pb-8 text-center text-3xl font-bold text-gray-900"> Forgot Your Passowrd?</h1>
+    <p class="text-sm text-gray-600 pb-4"> No problem enter your email address below and we'll send you a link to 
+        reset your password.
+    </p>
+    <form action="/forgot-pw" method="post">
+      <div class="hidden">{{csrfField}}</div>
+      <div class="py-2">
+        <label for="email" class="text-sm font-semibold text-gray-800">Email Address</label>
+        <input name="email" id="email" type="email" placeholder="Email address" required autocomplete="email"
+        class="w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-gray-800 rounded shadow" 
+        value="{{.Email}}"         
+        autofocus
+        /> <!-- preopulates email, auto focuses on the email input if there's no email -->
+      </div>
+    <div class="py-4">
+        <button class="w-full py-4 px-2 bg-indigo-400 hover:bg-indigo-700 text-white rounded font-bold" type="submit">Reset Password</button>
+      </div>
+    <div class="py-2 w-full flex justify-between">
+      <p class="text-xs text-gray-500">Need an account?<a class="underline" href="/signup">Sign up</a></p>
+      <p class="text-xs text-gray-800"><a class="underline" href="/signin">Remember your password?</a></p>
+    </div>
+    </form>
+  </div>
+</div>
+{{template "footer" .}}
