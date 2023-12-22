@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/csrf"
+	"github.com/joho/godotenv"
 	"github.com/psanti93/galleryValleyv1/controllers"
 	"github.com/psanti93/galleryValleyv1/migrations"
 	"github.com/psanti93/galleryValleyv1/models"
@@ -13,12 +16,57 @@ import (
 	"github.com/psanti93/galleryValleyv1/views"
 )
 
+type config struct {
+	PSQL models.PostgresConfig
+	SMTP models.SMTConfig
+	CSRF struct {
+		Key    string
+		Secure bool
+	}
+	Server struct {
+		Address string // "localhost:3000"
+	}
+}
+
+func loadEnvConfig() (config, error) {
+	var cfg config
+	// load the env file with the smtp
+	err := godotenv.Load()
+	if err != nil {
+		return cfg, err
+	}
+	// TODO: psql set up read from environment varibles
+	cfg.PSQL = models.DefaultPostgresConfig()
+
+	//TODO: smtp
+	cfg.SMTP.Host = os.Getenv("SMTP_HOST")
+	portStr := os.Getenv("SMTP_PORT")
+	cfg.SMTP.Port, err = strconv.Atoi(portStr)
+	if err != nil {
+		return cfg, err
+	}
+	cfg.SMTP.Username = os.Getenv("SMTP_USERNAME")
+	cfg.SMTP.Password = os.Getenv("SMTP_PASSWORD")
+
+	// TODO: CSRF read from env variables
+	cfg.CSRF.Key = "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
+	cfg.CSRF.Secure = false
+
+	// TODO address read from an environment variable
+	cfg.Server.Address = ":3000"
+	return cfg, nil
+}
+
 func main() {
+
+	cfg, err := loadEnvConfig()
+	if err != nil {
+		panic(err)
+	}
 
 	//Set Up database:
 
-	cfg := models.DefaultPostgresConfig()
-	db, err := models.Open(cfg)
+	db, err := models.Open(cfg.PSQL)
 
 	if err != nil {
 		panic(err)
@@ -34,23 +82,32 @@ func main() {
 
 	// Set Up services
 
-	userService := models.UserService{
+	userService := &models.UserService{
 		DB: db}
 
-	sessionService := models.SessionService{
+	sessionService := &models.SessionService{
+		DB: db,
+	}
+	passwordResetService := &models.PasswordResetService{
 		DB: db,
 	}
 
+	emailService := models.NewEmailService(cfg.SMTP)
+
 	//Set up middleware
 	umw := controllers.UserMiddleware{
-		SessionService: &sessionService,
+		SessionService: sessionService,
 	}
 
-	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"               // needs a 32 character auth key
-	csrfMw := csrf.Protect([]byte(csrfKey), csrf.Secure(false)) // csrf.Secure() by default it's true, it requires an https secure connection, false for now cause local we don't have https connection. set to true in prod
+	csrfMw := csrf.Protect([]byte(cfg.CSRF.Key), csrf.Secure(cfg.CSRF.Secure)) // csrf.Secure() by default it's true, it requires an https secure connection, false for now cause local we don't have https connection. set to true in prod
 
 	// set up controller:
-	usersC := controllers.Users{UserService: &userService, SessionService: &sessionService}
+	usersC := controllers.Users{
+		UserService:          userService,
+		SessionService:       sessionService,
+		PasswordResetService: passwordResetService,
+		EmailService:         emailService,
+	}
 
 	//set up router and routes
 
@@ -104,8 +161,12 @@ func main() {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
 
-	fmt.Println("Starting server on port 3000....")
+	fmt.Printf("Starting server on port %s ....\n ", cfg.Server.Address)
 
-	http.ListenAndServe(":3000", r)
+	err = http.ListenAndServe(cfg.Server.Address, r)
+
+	if err != nil {
+		panic(err)
+	}
 
 }
