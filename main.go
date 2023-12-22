@@ -79,6 +79,11 @@ func main() {
 	r.Get("/signin", usersC.SignIn)
 	r.Post("/signin", usersC.ProcessSignIn)
 
+	// Reset Password Route
+	usersC.Templates.ForgotPasswordTemplate = views.Must(views.ParseFS(templates.FS, "forgot-pw.gohtml", "tailwind.gohtml"))
+	r.Get("/forgot-pw", usersC.ForgotPassword)
+	r.Post("/forgot-pw", usersC.ProcessForgotPassword)
+
 	// getting the cookie of the user
 	// r.Get("/users/me", usersC.CurrentUser)
 
