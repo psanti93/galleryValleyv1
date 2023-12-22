@@ -135,6 +135,15 @@ func (u Users) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	u.Templates.ForgotPasswordTemplate.Execute(w, r, data)
 }
 
+func (u Users) CheckYourEmail(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email string
+	}
+	data.Email = r.FormValue("email")
+
+	u.Templates.CheckYoureEmail.Execute(w, r, data)
+}
+
 func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Email string

@@ -141,6 +141,9 @@ func main() {
 	r.Get("/forgot-pw", usersC.ForgotPassword)
 	r.Post("/forgot-pw", usersC.ProcessForgotPassword)
 
+	// Checking our email
+	usersC.Templates.CheckYoureEmail = views.Must(views.ParseFS(templates.FS, "check-your-email.gohtml", "tailwind.gohtml"))
+	r.Get("/check-your-email", usersC.CheckYourEmail)
 	// getting the cookie of the user
 	// r.Get("/users/me", usersC.CurrentUser)
 
