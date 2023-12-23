@@ -147,7 +147,7 @@ func main() {
 	r.Post("/reset-pw", usersC.ProcessResetPassword)
 
 	// Checking our email
-	usersC.Templates.CheckYoureEmail = views.Must(views.ParseFS(templates.FS, "check-your-email.gohtml", "tailwind.gohtml"))
+	usersC.Templates.CheckYourEmail = views.Must(views.ParseFS(templates.FS, "check-your-email.gohtml", "tailwind.gohtml"))
 
 	// getting the cookie of the user
 	// r.Get("/users/me", usersC.CurrentUser)

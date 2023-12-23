@@ -14,7 +14,7 @@ type Users struct {
 		SignUp                 View //using the view interface rather than reyling on the views.Templates package
 		SignIn                 View
 		ForgotPasswordTemplate View
-		CheckYoureEmail        View
+		CheckYourEmail         View
 		ResetPassword          View
 	}
 	UserService          *models.UserService
