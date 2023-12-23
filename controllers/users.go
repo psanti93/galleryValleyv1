@@ -127,6 +127,7 @@ func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/signin", http.StatusFound)
 }
 
+// Forget Password
 func (u Users) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	var data struct {
 		Email string
