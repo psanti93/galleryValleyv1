@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/csrf"
 	"github.com/joho/godotenv"
 	"github.com/psanti93/galleryValleyv1/controllers"
@@ -137,17 +137,18 @@ func main() {
 	r.Post("/signin", usersC.ProcessSignIn)
 
 	// Forgot Password Route
-	usersC.Templates.ForgotPasswordTemplate = views.Must(views.ParseFS(templates.FS, "forgot-pw.gohtml", "tailwind.gohtml"))
+	usersC.Templates.ForgotPassword = views.Must(views.ParseFS(templates.FS, "forgot-pw.gohtml", "tailwind.gohtml"))
 	r.Get("/forgot-pw", usersC.ForgotPassword)
 	r.Post("/forgot-pw", usersC.ProcessForgotPassword)
+
+	// Checking our email
+	usersC.Templates.CheckYourEmail = views.Must(views.ParseFS(templates.FS, "check-your-email.gohtml", "tailwind.gohtml"))
+	r.Get("/check-your-email", usersC.CheckYourEmail)
 
 	// Reset Password Route
 	usersC.Templates.ResetPassword = views.Must(views.ParseFS(templates.FS, "reset-password.gohtml", "tailwind.gohtml"))
 	r.Get("/reset-pw", usersC.ResetPassword)
 	r.Post("/reset-pw", usersC.ProcessResetPassword)
-
-	// Checking our email
-	usersC.Templates.CheckYourEmail = views.Must(views.ParseFS(templates.FS, "check-your-email.gohtml", "tailwind.gohtml"))
 
 	// getting the cookie of the user
 	// r.Get("/users/me", usersC.CurrentUser)
