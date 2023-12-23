@@ -11,11 +11,11 @@ import (
 
 type Users struct {
 	Templates struct {
-		SignUp                 View //using the view interface rather than reyling on the views.Templates package
-		SignIn                 View
-		ForgotPasswordTemplate View
-		CheckYourEmail         View
-		ResetPassword          View
+		SignUp         View //using the view interface rather than reyling on the views.Templates package
+		SignIn         View
+		ForgotPassword View
+		CheckYourEmail View
+		ResetPassword  View
 	}
 	UserService          *models.UserService
 	SessionService       *models.SessionService
@@ -134,7 +134,7 @@ func (u Users) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	data.Email = r.FormValue("email")
 
-	u.Templates.ForgotPasswordTemplate.Execute(w, r, data)
+	u.Templates.ForgotPassword.Execute(w, r, data)
 }
 
 func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
@@ -157,12 +157,19 @@ func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
 	resetURL := "https://www.lenslocked.com/reset-pw?" + vals.Encode()
 	err = u.EmailService.ForgotPassword(data.Email, resetURL)
 	if err != nil {
-		fmt.Println(err)
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
 	}
 	// Don't render reset token here! We need the user to confirm they have access to the email account to verify
 	// their identity
+	http.Redirect(w, r, "/check-your-email?email="+data.Email, http.StatusFound)
+}
+
+func (u Users) CheckYourEmail(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email string
+	}
+	data.Email = r.FormValue("email")
 	u.Templates.CheckYourEmail.Execute(w, r, data)
 }
 
