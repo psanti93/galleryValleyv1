@@ -136,10 +136,15 @@ func main() {
 	r.Get("/signin", usersC.SignIn)
 	r.Post("/signin", usersC.ProcessSignIn)
 
-	// Reset Password Route
+	// Forgot Password Route
 	usersC.Templates.ForgotPasswordTemplate = views.Must(views.ParseFS(templates.FS, "forgot-pw.gohtml", "tailwind.gohtml"))
 	r.Get("/forgot-pw", usersC.ForgotPassword)
 	r.Post("/forgot-pw", usersC.ProcessForgotPassword)
+
+	// Reset Password Route
+	usersC.Templates.ResetPassword = views.Must(views.ParseFS(templates.FS, "reset-password.gohtml", "tailwind.gohtml"))
+	r.Get("/reset-pw", usersC.ResetPassword)
+	r.Post("/reset-pw", usersC.ProcessResetPassword)
 
 	// Checking our email
 	usersC.Templates.CheckYoureEmail = views.Must(views.ParseFS(templates.FS, "check-your-email.gohtml", "tailwind.gohtml"))
