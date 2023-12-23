@@ -3,7 +3,7 @@ module github.com/psanti93/galleryValleyv1
 go 1.21
 
 require (
-	github.com/go-chi/chi v1.5.5
+	github.com/go-chi/chi/v5 v5.0.11 
 	github.com/gorilla/csrf v1.7.2
 	github.com/jackc/pgx/v4 v4.18.1
 	golang.org/x/crypto v0.17.0
