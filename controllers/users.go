@@ -163,7 +163,7 @@ func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	// Don't render reset token here! We need the user to confirm they have access to the email account to verify
 	// their identity
-	u.Templates.CheckYoureEmail.Execute(w, r, data)
+	u.Templates.CheckYourEmail.Execute(w, r, data)
 }
 
 // Reset password
@@ -189,7 +189,12 @@ func (u Users) ProcessResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO update the user's password
+	err = u.UserService.UpdatePassword(user.ID, data.Password)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
 
 	//Sign the user in now that their password has been reset
 	//any errors from this point should redirect a user to the sign in page
