@@ -162,7 +162,9 @@ func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	// Don't render reset token here! We need the user to confirm they have access to the email account to verify
 	// their identity
-	http.Redirect(w, r, "/check-your-email?email="+data.Email, http.StatusFound)
+	u.Templates.CheckYourEmail.Execute(w, r, data)
+
+	//http.Redirect(w, r, "/check-your-email?email="+data.Email, http.StatusFound)
 }
 
 func (u Users) CheckYourEmail(w http.ResponseWriter, r *http.Request) {
