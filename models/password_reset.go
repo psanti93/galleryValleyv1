@@ -85,10 +85,51 @@ func (passwordResetService *PasswordResetService) Create(email string) (*Passwor
 }
 
 func (passwordResetService *PasswordResetService) Consume(token string) (*User, error) {
-	return nil, fmt.Errorf("TODO: Implement PassworkdResetService.Consume")
+
+	//1. Validate the token and make sure it's not expired
+	tokenHash := passwordResetService.hashToken(token)
+	var user User
+	var pwReset PasswordReset
+	row := passwordResetService.DB.QueryRow(`
+		SELECT password_resets.id,
+			password_resets.expires_at,
+			users.id,
+			users.email,
+			users.password_hash
+		FROM password_resets 
+		  JOIN users ON users.id = password_resets.user_id
+		WHERE password_resets.token_hash = $1;`, tokenHash)
+	err := row.Scan(&pwReset.ID, &pwReset.ExpiresAt, &user.ID, &user.Email, &user.Password)
+
+	if err != nil {
+		return nil, fmt.Errorf("Consume:  %v", err)
+	}
+
+	// in the event the time is after the password is expired
+	if time.Now().After(pwReset.ExpiresAt) {
+		return nil, fmt.Errorf("Token Expired %v", token)
+	}
+	// Deleting the reset token after it's been  used
+	err = passwordResetService.delete(pwReset.ID)
+	if err != nil {
+		return nil, fmt.Errorf("Consume: %w", err)
+	}
+
+	return &user, nil
 }
 
 func (passwordResetService *PasswordResetService) hashToken(token string) string {
 	tokenHash := sha256.Sum256([]byte(token))
 	return base64.URLEncoding.EncodeToString(tokenHash[:]) // [:] take the start and end of a byte array and use all the bytes of w/in an array
+}
+
+func (passwordResetService *PasswordResetService) delete(id int) error {
+	_, err := passwordResetService.DB.Exec(`
+		DELETE FROM password_resets
+		WHERE id = $1;`, id)
+	if err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+
+	return nil
 }
