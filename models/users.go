@@ -77,7 +77,7 @@ func (us UserService) UpdatePassword(userId int, password string) error {
 		return fmt.Errorf("Update password error: %v", err)
 	}
 	passwordHash := string(hashedBytes)
-	_, err = us.DB.Exec(`INSERT INTO users (password_hash) VALUE $1 WHERE userId=$2`, passwordHash, userId)
+	_, err = us.DB.Exec(`UPDATE users SET password_hash = $1 WHERE id =$2;`, passwordHash, userId)
 
 	if err != nil {
 		return fmt.Errorf("Error in updating password: %v", err)
